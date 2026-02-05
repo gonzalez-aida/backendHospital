@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Management Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            color: white;
+            margin-bottom: 40px;
+            text-align: center;
+            animation: fadeIn 0.6s ease-in;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            color: #667eea;
+        }
+
+        .card-icon {
+            font-size: 2.5em;
+            margin-right: 15px;
+        }
+
+        .card-title {
+            font-size: 0.9em;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .card-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333;
+            margin: 15px 0;
+        }
+
+        .card-footer {
+            font-size: 0.9em;
+            color: #999;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .status.operational {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .info-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.7s ease-out 0.2s backwards;
+        }
+
+        .info-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-item strong {
+            color: #667eea;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #f5c6cb;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid #c3e6cb;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+
+            .card-value {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Hospital Management Dashboard</h1>
+            <p>Real-time Hospital Statistics and Management System</p>
+        </div>
+
+        <div class="dashboard">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">📋</span>
+                    <div>
+                        <div class="card-title">Medical Records</div>
+                    </div>
+                </div>
+                <div class="card-value" id="totalExpedientes">-</div>
+                <div class="card-footer">
+                    Total patient medical records in system
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">👨‍⚕️</span>
+                    <div>
+                        <div class="card-title">Doctors</div>
+                    </div>
+                </div>
+                <div class="card-value" id="totalMedicos">-</div>
+                <div class="card-footer">
+                    Total registered physicians on staff
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">⚙️</span>
+                    <div>
+                        <div class="card-title">System Status</div>
+                    </div>
+                </div>
+                <div class="card-value" id="hospitalStatus" style="font-size: 1.5em; color: #28a745;">-</div>
+                <div id="statusBadge" class="status operational" style="display: none; margin-top: 15px;">
+                    ✓ Operational
+                </div>
+            </div>
+        </div>
+
+        <div class="info-section">
+            <h2>📊 Dashboard Information</h2>
+            <div class="info-grid">
+                <div class="info-item">
+                    <strong>Last Updated:</strong>
+                    <span id="lastUpdated">Loading...</span>
+                </div>
+                <div class="info-item">
+                    <strong>API Status:</strong>
+                    <span id="apiStatus">Connecting...</span>
+                </div>
+                <div class="info-item">
+                    <strong>System Version:</strong>
+                    <span>1.0.0</span>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-primary" onclick="refreshDashboard()">
+                    🔄 Refresh Stats
+                </button>
+                <a href="/api/dashboard/stats" class="btn btn-secondary">
+                    📡 View API Response
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Fetch dashboard statistics
+        async function fetchDashboardStats() {
+            try {
+                const response = await fetch('/api/dashboard/stats');
+                if (!response.ok) {
+                    throw new Error('Failed to fetch dashboard statistics');
+                }
+                const data = await response.json();
+                updateDashboard(data);
+                updateApiStatus('Connected', '#28a745');
+            } catch (error) {
+                console.error('Error:', error);
+                updateApiStatus('Disconnected', '#dc3545');
+                showError('Failed to load dashboard data. Please check if the server is running.');
+            }
+        }
+
+        // Update dashboard with fetched data
+        function updateDashboard(data) {
+            document.getElementById('totalExpedientes').textContent = data.totalExpedientes;
+            document.getElementById('totalMedicos').textContent = data.totalMedicos;
+            document.getElementById('hospitalStatus').textContent = 
+                data.hospitalStatus === 'OPERATIONAL' ? '✓' : '⚠';
+            document.getElementById('lastUpdated').textContent = data.lastUpdated;
+            
+            if (data.hospitalStatus === 'OPERATIONAL') {
+                document.getElementById('statusBadge').style.display = 'inline-block';
+            }
+        }
+
+        // Update API status indicator
+        function updateApiStatus(status, color) {
+            const statusElement = document.getElementById('apiStatus');
+            statusElement.textContent = status;
+            statusElement.style.color = color;
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = '❌ ' + message;
+            document.querySelector('.dashboard').before(errorDiv);
+            setTimeout(() => errorDiv.remove(), 5000);
+        }
+
+        // Refresh dashboard
+        function refreshDashboard() {
+            const button = event.target;
+            button.disabled = true;
+            button.innerHTML = '<span class="loading"></span> Refreshing...';
+            
+            fetchDashboardStats().then(() => {
+                button.disabled = false;
+                button.textContent = '🔄 Refresh Stats';
+                showSuccess('Dashboard updated successfully!');
+            });
+        }
+
+        // Show success message
+        function showSuccess(message) {
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success';
+            successDiv.textContent = '✓ ' + message;
+            document.querySelector('.dashboard').before(successDiv);
+            setTimeout(() => successDiv.remove(), 3000);
+        }
+
+        // Initial load
+        window.addEventListener('load', fetchDashboardStats);
+        
+        // Auto-refresh every 30 seconds
+        setInterval(fetchDashboardStats, 30000);
+    </script>
+</body>
+</html>
