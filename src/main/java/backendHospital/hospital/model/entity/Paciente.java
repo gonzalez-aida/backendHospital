@@ -22,7 +22,8 @@ public class Paciente {
     private List<Expediente> expedientes;
 
     // Constructor vacío
-    public Paciente() {}
+    public Paciente() {
+    }
 
     // Getters y Setters
 
